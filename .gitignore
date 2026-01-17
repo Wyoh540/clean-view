@@ -104,3 +104,7 @@ Thumbs.db
 
 # Temp
 temp-electron/
+
+.cursor
+.specify
+specs
