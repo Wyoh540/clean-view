@@ -51,14 +51,14 @@ export function App() {
     [navigation]
   );
 
-  // 处理节点双击（进入目录）：未展开目录先触发展开再导航
+  // 处理节点双击（进入目录）：未展开目录先触发展开再导航，展开失败则不进入
   const handleNodeDoubleClick = useCallback(
     async (node: FileNode) => {
       if (node.type !== 'directory' || !node.accessible) return;
       const needExpand = node.childrenLoaded === false;
       if (needExpand) {
-        await expandDirectory(node.path);
-        // 展开后 rootNode 已更新，navigation 会从 rootNode 取 currentNode
+        const ok = await expandDirectory(node.path);
+        if (!ok) return;
       }
       navigation.navigateTo(node);
       setSelectedNode(null);

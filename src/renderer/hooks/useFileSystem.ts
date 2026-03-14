@@ -3,7 +3,7 @@
  * 文件系统操作 Hook
  */
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useRef } from 'react';
 
 import { replaceNodeAtPath } from '../lib/treeUtils';
 import type { FileNode, ScanDirectoryRequest } from '../types';
@@ -19,8 +19,8 @@ interface UseFileSystemReturn {
   selectAndScanDirectory: () => Promise<void>;
   /** 扫描指定目录 */
   scanDirectory: (path: string, options?: Partial<ScanDirectoryRequest>) => Promise<void>;
-  /** 展开未加载子节点的目录（渐进式扫描） */
-  expandDirectory: (path: string) => Promise<void>;
+  /** 展开未加载子节点的目录（渐进式扫描），返回是否成功 */
+  expandDirectory: (path: string) => Promise<boolean>;
   /** 取消扫描 */
   cancelScan: () => Promise<void>;
   /** 刷新当前目录 */
@@ -74,8 +74,12 @@ export function useFileSystem(): UseFileSystemReturn {
     }
   }, [scanDirectory]);
 
-  const expandDirectory = useCallback(async (path: string) => {
+  const expandingPathRef = useRef<string | null>(null);
+
+  const expandDirectory = useCallback(async (path: string): Promise<boolean> => {
+    if (expandingPathRef.current) return false;
     setError(null);
+    expandingPathRef.current = path;
     try {
       const res = await window.cleanViewAPI.expandDirectory({ path });
       if (res.success && res.root) {
@@ -89,11 +93,15 @@ export function useFileSystem(): UseFileSystemReturn {
               }))
             : prev
         );
-      } else {
-        setError(res.error ?? '展开目录失败');
+        return true;
       }
+      setError(res.error ?? '展开目录失败');
+      return false;
     } catch (err) {
       setError(err instanceof Error ? err.message : '展开目录失败');
+      return false;
+    } finally {
+      expandingPathRef.current = null;
     }
   }, []);
 
