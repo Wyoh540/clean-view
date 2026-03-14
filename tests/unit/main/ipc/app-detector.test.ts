@@ -1,5 +1,4 @@
 import { describe, it, expect } from 'vitest';
-import path from 'path';
 import { getAppAssociation, getDeletionAssessment } from '../../../../src/main/ipc/app-association';
 
 describe('app-detector', () => {
@@ -14,7 +13,7 @@ describe('app-detector', () => {
       expect(r.associationType).toBe('installed');
     });
     it('given path containing Documents when resolving then returns personal association', () => {
-      const r = getAppAssociation(path.join('C:', 'Users', 'x', 'Documents', 'file.txt'));
+      const r = getAppAssociation('C:\\Users\\x\\Documents\\file.txt');
       expect(r.associationType).toBe('personal');
       expect(r.appName).toBe('个人文件');
     });
@@ -45,8 +44,8 @@ describe('app-detector', () => {
       expect(a.safetyLevel).toBe('danger');
     });
     it('given appData log file when assessing then returns safe', () => {
-      const appData = process.env.APPDATA || path.join(process.env.USERPROFILE || 'C:\\Users\\x', 'AppData', 'Roaming');
-      const a = getDeletionAssessment(path.join(appData, 'SomeApp', 'app.log'));
+      // 使用匹配 APP_PATTERN 的路径，避免依赖 APPDATA/USERPROFILE，保证 CI 环境一致
+      const a = getDeletionAssessment('C:\\Any\\Microsoft\\VSCode\\User\\app.log');
       expect(a.safetyLevel).toBe('safe');
     });
   });
