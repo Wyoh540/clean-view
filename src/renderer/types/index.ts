@@ -22,6 +22,8 @@ export interface FileNode {
   type: 'file' | 'directory';
   /** 子节点列表（仅目录有效） */
   children?: FileNode[];
+  /** 仅目录有效：子节点是否已加载；未展开为 false */
+  childrenLoaded?: boolean;
   /** 父节点路径 */
   parentPath: string | null;
   /** 是否可访问 */
