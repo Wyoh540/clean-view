@@ -220,6 +220,17 @@ export interface CancelScanResponse {
   success: boolean;
 }
 
+export interface ExpandDirectoryRequest {
+  path: string;
+  excludePatterns?: string[];
+}
+
+export interface ExpandDirectoryResponse {
+  success: boolean;
+  root?: FileNode;
+  error?: string;
+}
+
 export interface OpenInExplorerRequest {
   path: string;
 }
@@ -237,6 +248,7 @@ export interface CleanViewAPI {
   selectDirectory: (request?: SelectDirectoryRequest) => Promise<SelectDirectoryResponse>;
   scanDirectory: (request: ScanDirectoryRequest) => Promise<ScanDirectoryResponse>;
   cancelScan: (request: CancelScanRequest) => Promise<CancelScanResponse>;
+  expandDirectory: (request: ExpandDirectoryRequest) => Promise<ExpandDirectoryResponse>;
   getFileDetails: (request: GetFileDetailsRequest) => Promise<GetFileDetailsResponse>;
   getAppAssociation: (request: GetAppAssociationRequest) => Promise<GetAppAssociationResponse>;
   getDeletionAssessment: (

@@ -9,6 +9,7 @@ export const IPC_CHANNELS = {
   SCAN_DIRECTORY: 'fs:scan-directory',
   SCAN_PROGRESS: 'fs:scan-progress',
   CANCEL_SCAN: 'fs:cancel-scan',
+  EXPAND_DIRECTORY: 'fs:expand-directory',
 
   // 文件信息
   GET_FILE_DETAILS: 'fs:get-file-details',

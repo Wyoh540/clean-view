@@ -11,6 +11,8 @@ import { IPC_CHANNELS } from './channels';
 import {
   ScanDirectoryRequest,
   ScanDirectoryResponse,
+  ExpandDirectoryRequest,
+  ExpandDirectoryResponse,
   FileNode,
   ScanProgress,
   CancelScanRequest,
@@ -85,6 +87,30 @@ export function registerScannerHandlers(): void {
         // 清理
         activeScanCancelled.delete(scanPath);
         scanProgressMap.delete(scanPath);
+      }
+    }
+  );
+
+  // 展开目录（以 path 为根扫 5 层，用于渐进式加载）
+  ipcMain.handle(
+    IPC_CHANNELS.EXPAND_DIRECTORY,
+    async (_event, request: ExpandDirectoryRequest): Promise<ExpandDirectoryResponse> => {
+      const { path: dirPath, excludePatterns } = request;
+      try {
+        const root = await scanDirectory(
+          dirPath,
+          null,
+          0,
+          5,
+          excludePatterns ?? [],
+          dirPath
+        );
+        return { success: true, root };
+      } catch (error) {
+        return {
+          success: false,
+          error: error instanceof Error ? error.message : 'Unknown error',
+        };
       }
     }
   );

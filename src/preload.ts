@@ -14,6 +14,8 @@ import type {
   ScanDirectoryResponse,
   CancelScanRequest,
   CancelScanResponse,
+  ExpandDirectoryRequest,
+  ExpandDirectoryResponse,
   GetFileDetailsRequest,
   GetFileDetailsResponse,
   GetAppAssociationRequest,
@@ -38,6 +40,9 @@ contextBridge.exposeInMainWorld('cleanViewAPI', {
 
   cancelScan: (request: CancelScanRequest): Promise<CancelScanResponse> =>
     ipcRenderer.invoke(IPC_CHANNELS.CANCEL_SCAN, request),
+
+  expandDirectory: (request: ExpandDirectoryRequest): Promise<ExpandDirectoryResponse> =>
+    ipcRenderer.invoke(IPC_CHANNELS.EXPAND_DIRECTORY, request),
 
   // 文件信息
   getFileDetails: (request: GetFileDetailsRequest): Promise<GetFileDetailsResponse> =>
