@@ -19,7 +19,7 @@ import { formatBytes } from '@/lib/format';
 import type { FileNode, DeleteResult, DeletionAssessment } from '@/types';
 
 export function App() {
-  const { rootNode, isScanning, error, selectAndScanDirectory, cancelScan, refresh } =
+  const { rootNode, isScanning, error, selectAndScanDirectory, expandDirectory, cancelScan, refresh } =
     useFileSystem();
   const { progress } = useScanProgress();
   const navigation = useNavigation(rootNode);
@@ -51,15 +51,19 @@ export function App() {
     [navigation]
   );
 
-  // 处理节点双击（进入目录）
+  // 处理节点双击（进入目录）：未展开目录先触发展开再导航
   const handleNodeDoubleClick = useCallback(
-    (node: FileNode) => {
-      if (node.type === 'directory' && node.accessible) {
-        navigation.navigateTo(node);
-        setSelectedNode(null);
+    async (node: FileNode) => {
+      if (node.type !== 'directory' || !node.accessible) return;
+      const needExpand = node.childrenLoaded === false;
+      if (needExpand) {
+        await expandDirectory(node.path);
+        // 展开后 rootNode 已更新，navigation 会从 rootNode 取 currentNode
       }
+      navigation.navigateTo(node);
+      setSelectedNode(null);
     },
-    [navigation]
+    [navigation, expandDirectory]
   );
 
   // 关闭详情面板
