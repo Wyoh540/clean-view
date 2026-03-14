@@ -5,6 +5,7 @@
 
 import { useState, useCallback } from 'react';
 
+import { replaceNodeAtPath } from '../lib/treeUtils';
 import type { FileNode, ScanDirectoryRequest } from '../types';
 
 interface UseFileSystemReturn {
@@ -18,6 +19,8 @@ interface UseFileSystemReturn {
   selectAndScanDirectory: () => Promise<void>;
   /** 扫描指定目录 */
   scanDirectory: (path: string, options?: Partial<ScanDirectoryRequest>) => Promise<void>;
+  /** 展开未加载子节点的目录（渐进式扫描） */
+  expandDirectory: (path: string) => Promise<void>;
   /** 取消扫描 */
   cancelScan: () => Promise<void>;
   /** 刷新当前目录 */
@@ -39,7 +42,7 @@ export function useFileSystem(): UseFileSystemReturn {
       try {
         const response = await window.cleanViewAPI.scanDirectory({
           path,
-          maxDepth: options?.maxDepth,
+          maxDepth: options?.maxDepth ?? 5,
           excludePatterns: options?.excludePatterns,
         });
 
@@ -71,6 +74,29 @@ export function useFileSystem(): UseFileSystemReturn {
     }
   }, [scanDirectory]);
 
+  const expandDirectory = useCallback(async (path: string) => {
+    setError(null);
+    try {
+      const res = await window.cleanViewAPI.expandDirectory({ path });
+      if (res.success && res.root) {
+        setRootNode(prev =>
+          prev
+            ? replaceNodeAtPath(prev, path, node => ({
+                ...node,
+                children: res.root!.children,
+                size: res.root!.size,
+                childrenLoaded: true,
+              }))
+            : prev
+        );
+      } else {
+        setError(res.error ?? '展开目录失败');
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : '展开目录失败');
+    }
+  }, []);
+
   const cancelScan = useCallback(async () => {
     if (currentPath) {
       try {
@@ -94,6 +120,7 @@ export function useFileSystem(): UseFileSystemReturn {
     error,
     selectAndScanDirectory,
     scanDirectory,
+    expandDirectory,
     cancelScan,
     refresh,
   };
