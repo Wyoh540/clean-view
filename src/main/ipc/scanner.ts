@@ -178,8 +178,9 @@ async function scanDirectory(
     depth,
   };
 
-  // 检查深度限制
+  // 检查深度限制：未读子项，标记为未展开
   if (depth >= maxDepth) {
+    node.childrenLoaded = false;
     return node;
   }
 
