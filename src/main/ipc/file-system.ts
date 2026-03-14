@@ -182,9 +182,9 @@ export function registerFileSystemHandlers(): void {
 }
 
 /**
- * 递归计算目录大小
+ * 递归计算目录大小（不跟随符号链接，与扫描器行为一致时可用于对比）
  */
-async function getDirectorySize(dirPath: string): Promise<number> {
+export async function getDirectorySize(dirPath: string): Promise<number> {
   let size = 0;
 
   try {
@@ -193,6 +193,9 @@ async function getDirectorySize(dirPath: string): Promise<number> {
     for (const entry of entries) {
       const fullPath = path.join(dirPath, entry.name);
 
+      if (entry.isSymbolicLink()) {
+        continue;
+      }
       if (entry.isDirectory()) {
         size += await getDirectorySize(fullPath);
       } else {

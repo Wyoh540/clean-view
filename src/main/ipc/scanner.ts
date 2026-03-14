@@ -204,9 +204,10 @@ async function scanDirectory(
     depth,
   };
 
-  // 检查深度限制：未读子项，标记为未展开
+  // 检查深度限制：未读子项，标记为未展开；但仍计算该目录总大小以保证显示准确
   if (depth >= maxDepth) {
     node.childrenLoaded = false;
+    node.size = await getDirectorySizeForScan(dirPath, excludePatterns);
     return node;
   }
 
@@ -304,6 +305,37 @@ async function scanDirectory(
 }
 
 /**
+ * 仅计算目录大小（与扫描规则一致：跳过符号链接、应用排除规则），用于未展开目录的 size 显示
+ */
+async function getDirectorySizeForScan(
+  dirPath: string,
+  excludePatterns: string[]
+): Promise<number> {
+  let size = 0;
+  try {
+    const entries = await fs.readdir(dirPath, { withFileTypes: true });
+    for (const entry of entries) {
+      const fullPath = path.join(dirPath, entry.name);
+      if (shouldExclude(fullPath, excludePatterns)) continue;
+      if (entry.isSymbolicLink()) continue;
+      if (entry.isDirectory()) {
+        size += await getDirectorySizeForScan(fullPath, excludePatterns);
+      } else {
+        try {
+          const st = await fs.stat(fullPath);
+          size += st.size;
+        } catch {
+          // 忽略无法访问的文件
+        }
+      }
+    }
+  } catch {
+    // 忽略无法访问的目录
+  }
+  return size;
+}
+
+/**
  * 检查路径是否应该被排除
  */
 function shouldExclude(filePath: string, patterns: string[]): boolean {
@@ -337,4 +369,36 @@ function sendScanProgress(progress: ScanProgress): void {
   windows.forEach(window => {
     window.webContents.send(IPC_CHANNELS.SCAN_PROGRESS, progress);
   });
+}
+
+/**
+ * 仅用于测试：在给定路径上执行扫描并返回根节点（用于验证扫描大小等行为）
+ */
+export async function runScanForTest(
+  scanPath: string,
+  maxDepth: number,
+  excludePatterns: string[] = []
+): Promise<FileNode> {
+  activeScanCancelled.set(scanPath, false);
+  const progress: ScanProgress = {
+    status: 'scanning',
+    scannedCount: 0,
+    scannedSize: 0,
+    currentPath: scanPath,
+    startTime: new Date().toISOString(),
+  };
+  scanProgressMap.set(scanPath, progress);
+  try {
+    return await scanDirectory(
+      scanPath,
+      null,
+      0,
+      maxDepth,
+      excludePatterns,
+      scanPath
+    );
+  } finally {
+    activeScanCancelled.delete(scanPath);
+    scanProgressMap.delete(scanPath);
+  }
 }

@@ -73,7 +73,12 @@ function computeLayout(
   height: number
 ): LayoutNode {
   const root = hierarchy(data)
-    .sum((d) => (d.type === 'file' ? d.size : 0))
+    .sum((d) => {
+      if (d.type === 'file') return d.size;
+      // 有子节点时由子节点汇总；无子节点（未展开目录）时使用自身 size 以正确占位
+      if (d.children && d.children.length > 0) return 0;
+      return d.size;
+    })
     .sort((a, b) => (b.value || 0) - (a.value || 0));
 
   const treemapLayout = treemap<TreemapNodeData>()
