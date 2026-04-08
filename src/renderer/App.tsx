@@ -14,6 +14,7 @@ import { Treemap } from '@/components/treemap/Treemap';
 import { TreemapToolbar } from '@/components/treemap/TreemapToolbar';
 import { FileDetails } from '@/components/details/FileDetails';
 import { TooltipProvider } from '@/components/ui/tooltip';
+import { ThemeProvider } from '@/providers/theme-provider';
 import { formatBytes } from '@/lib/format';
 
 import type { FileNode, DeleteResult, DeletionAssessment } from '@/types';
@@ -91,89 +92,91 @@ export function App() {
     : 0;
 
   return (
-    <TooltipProvider>
-      <div className="h-screen flex flex-col bg-background">
-        {/* 顶部工具栏 */}
-        <FolderPicker
-          currentPath={rootNode?.path ?? null}
-          isScanning={isScanning || progress?.status === 'scanning'}
-          scanProgress={scanProgressPercent}
-          scannedCount={progress?.scannedCount}
-          scannedSize={progress?.scannedSize}
-          onSelectFolder={selectAndScanDirectory}
-          onRefresh={refresh}
-          onCancelScan={cancelScan}
-        />
-
-        {/* 面包屑导航 */}
-        {rootNode && (
-          <Breadcrumb
-            items={navigation.breadcrumbs}
-            canGoBack={navigation.canGoBack}
-            onItemClick={navigation.jumpTo}
-            onBack={navigation.goBack}
-            onHome={navigation.goToRoot}
+    <ThemeProvider>
+      <TooltipProvider>
+        <div className="h-screen flex flex-col bg-background">
+          {/* 顶部工具栏 */}
+          <FolderPicker
+            currentPath={rootNode?.path ?? null}
+            isScanning={isScanning || progress?.status === 'scanning'}
+            scanProgress={scanProgressPercent}
+            scannedCount={progress?.scannedCount}
+            scannedSize={progress?.scannedSize}
+            onSelectFolder={selectAndScanDirectory}
+            onRefresh={refresh}
+            onCancelScan={cancelScan}
           />
-        )}
 
-        {/* 错误提示 */}
-        {error && (
-          <div className="px-4 py-2 bg-destructive/10 text-destructive text-sm">{error}</div>
-        )}
-
-        {/* 主内容区域 */}
-        <div className="flex-1 flex overflow-hidden">
-          {/* 树图区域 + 底部工具栏 */}
-          <div className="flex-1 flex flex-col">
-            <div className="flex-1 p-4">
-              <Treemap
-                data={navigation.currentNode}
-                onNodeClick={handleNodeClick}
-                onNodeDoubleClick={handleNodeDoubleClick}
-                selectedPath={selectedNode?.path}
-              />
-            </div>
-            {/* 底部工具栏 */}
-            <TreemapToolbar
-              selectedNode={selectedNode}
-              deletionAssessment={deletionAssessment}
-              onDeleted={handleDeleted}
-            />
-          </div>
-
-          {/* 侧边详情面板 */}
-          {selectedNode && (
-            <FileDetails
-              node={selectedNode}
-              onClose={handleCloseDetails}
-              onDeleted={handleDeleted}
+          {/* 面包屑导航 */}
+          {rootNode && (
+            <Breadcrumb
+              items={navigation.breadcrumbs}
+              canGoBack={navigation.canGoBack}
+              onItemClick={navigation.jumpTo}
+              onBack={navigation.goBack}
+              onHome={navigation.goToRoot}
             />
           )}
-        </div>
 
-        {/* 底部状态栏 */}
-        <div className="flex items-center justify-between px-4 py-2 border-t bg-muted/30 text-xs text-muted-foreground">
-          <div>
-            {rootNode && (
-              <span>
-                总大小: <strong>{formatBytes(rootNode.size)}</strong>
-                {navigation.currentNode && navigation.currentNode !== rootNode && (
-                  <span className="ml-4">
-                    当前目录: <strong>{formatBytes(navigation.currentNode.size)}</strong>
-                  </span>
-                )}
-              </span>
+          {/* 错误提示 */}
+          {error && (
+            <div className="px-4 py-2 bg-destructive/10 text-destructive text-sm">{error}</div>
+          )}
+
+          {/* 主内容区域 */}
+          <div className="flex-1 flex overflow-hidden">
+            {/* 树图区域 + 底部工具栏 */}
+            <div className="flex-1 flex flex-col">
+              <div className="flex-1 p-4">
+                <Treemap
+                  data={navigation.currentNode}
+                  onNodeClick={handleNodeClick}
+                  onNodeDoubleClick={handleNodeDoubleClick}
+                  selectedPath={selectedNode?.path}
+                />
+              </div>
+              {/* 底部工具栏 */}
+              <TreemapToolbar
+                selectedNode={selectedNode}
+                deletionAssessment={deletionAssessment}
+                onDeleted={handleDeleted}
+              />
+            </div>
+
+            {/* 侧边详情面板 */}
+            {selectedNode && (
+              <FileDetails
+                node={selectedNode}
+                onClose={handleCloseDetails}
+                onDeleted={handleDeleted}
+              />
             )}
           </div>
-          <div>
-            {selectedNode && (
-              <span>
-                已选择: {selectedNode.name} ({formatBytes(selectedNode.size)})
-              </span>
-            )}
+
+          {/* 底部状态栏 */}
+          <div className="flex items-center justify-between px-4 py-2 border-t bg-muted/30 text-xs text-muted-foreground">
+            <div>
+              {rootNode && (
+                <span>
+                  总大小: <strong>{formatBytes(rootNode.size)}</strong>
+                  {navigation.currentNode && navigation.currentNode !== rootNode && (
+                    <span className="ml-4">
+                      当前目录: <strong>{formatBytes(navigation.currentNode.size)}</strong>
+                    </span>
+                  )}
+                </span>
+              )}
+            </div>
+            <div>
+              {selectedNode && (
+                <span>
+                  已选择: {selectedNode.name} ({formatBytes(selectedNode.size)})
+                </span>
+              )}
+            </div>
           </div>
         </div>
-      </div>
-    </TooltipProvider>
+      </TooltipProvider>
+    </ThemeProvider>
   );
 }
