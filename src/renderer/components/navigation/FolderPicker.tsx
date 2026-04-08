@@ -9,6 +9,7 @@ import { FolderOpen, RefreshCw, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { formatBytes } from '@/lib/format';
+import { ThemeToggle } from '@/components/theme/ThemeToggle';
 
 interface FolderPickerProps {
   /** 当前选中的路径 */
@@ -47,18 +48,6 @@ export function FolderPicker({
             <FolderOpen className="w-4 h-4 mr-2" />
             选择文件夹
           </Button>
-
-          {currentPath && (
-            <Button onClick={onRefresh} disabled={isScanning} variant="outline" size="icon">
-              <RefreshCw className={`w-4 h-4 ${isScanning ? 'animate-spin' : ''}`} />
-            </Button>
-          )}
-
-          {isScanning && (
-            <Button onClick={onCancelScan} variant="ghost" size="icon">
-              <X className="w-4 h-4" />
-            </Button>
-          )}
         </div>
 
         {currentPath && (
@@ -66,6 +55,29 @@ export function FolderPicker({
             {currentPath}
           </div>
         )}
+
+        <div className="flex items-center gap-2">
+          {currentPath && (
+            <Button
+              variant="ghost"
+              size="icon"
+              disabled={isScanning}
+              onClick={onRefresh}
+            >
+              <RefreshCw className="h-4 w-4" />
+            </Button>
+          )}
+          {isScanning && (
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={onCancelScan}
+            >
+              <X className="h-4 w-4" />
+            </Button>
+          )}
+          <ThemeToggle />
+        </div>
       </div>
 
       {isScanning && (
