@@ -17,10 +17,10 @@ import {
   DialogTrigger,
   DialogClose,
 } from '@/components/ui/dialog';
-import { SafetyBadge } from './SafetyBadge';
 import { formatBytes } from '@/lib/format';
-
 import type { FileNode, DeletionAssessment, DeleteResult } from '@/types';
+
+import { SafetyBadge } from './SafetyBadge';
 
 interface DeleteConfirmProps {
   /** 要删除的文件节点 */

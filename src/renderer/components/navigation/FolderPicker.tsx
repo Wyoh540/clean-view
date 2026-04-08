@@ -59,12 +59,12 @@ export function FolderPicker({
         <div className="flex items-center gap-2">
           {currentPath && (
             <Button
-              variant="ghost"
+              variant="outline"
               size="icon"
               disabled={isScanning}
               onClick={onRefresh}
             >
-              <RefreshCw className="h-4 w-4" />
+              <RefreshCw className={`h-4 w-4 ${isScanning ? 'animate-spin' : ''}`} />
             </Button>
           )}
           {isScanning && (

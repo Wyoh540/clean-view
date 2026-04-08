@@ -6,7 +6,6 @@
 import { contextBridge, ipcRenderer, IpcRendererEvent } from 'electron';
 
 import { IPC_CHANNELS } from './main/ipc/channels';
-
 import type {
   SelectDirectoryRequest,
   SelectDirectoryResponse,

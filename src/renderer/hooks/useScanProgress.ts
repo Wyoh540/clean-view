@@ -16,14 +16,6 @@ interface UseScanProgressReturn {
   resetProgress: () => void;
 }
 
-const initialProgress: ScanProgress = {
-  status: 'idle',
-  scannedCount: 0,
-  scannedSize: 0,
-  currentPath: '',
-  startTime: new Date().toISOString(),
-};
-
 export function useScanProgress(): UseScanProgressReturn {
   const [progress, setProgress] = useState<ScanProgress | null>(null);
 

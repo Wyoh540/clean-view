@@ -1,4 +1,5 @@
 import { describe, it, expect } from 'vitest';
+
 import { getAppAssociation, getDeletionAssessment } from '../../../../src/main/ipc/app-association';
 
 describe('app-detector', () => {

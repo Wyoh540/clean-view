@@ -16,7 +16,6 @@ import { FileDetails } from '@/components/details/FileDetails';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { ThemeProvider } from '@/providers/theme-provider';
 import { formatBytes } from '@/lib/format';
-
 import type { FileNode, DeleteResult, DeletionAssessment } from '@/types';
 
 export function App() {

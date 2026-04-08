@@ -8,6 +8,7 @@ import React from 'react';
 import { Folder, File, AlertCircle, HardDrive } from 'lucide-react';
 
 import { formatBytes } from '@/lib/format';
+
 import type { LayoutNode } from './types';
 
 interface TreemapTooltipProps {

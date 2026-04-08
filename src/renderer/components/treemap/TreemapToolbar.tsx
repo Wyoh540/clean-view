@@ -9,7 +9,6 @@ import { Folder, File, FolderOpen, Trash2, Loader2, AlertCircle } from 'lucide-r
 import { Button } from '@/components/ui/button';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { formatBytes } from '@/lib/format';
-
 import type { FileNode, DeleteResult, DeletionAssessment } from '@/types';
 
 interface TreemapToolbarProps {

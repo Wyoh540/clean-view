@@ -7,7 +7,6 @@ import { ipcMain, dialog, shell, BrowserWindow } from 'electron';
 import fs from 'fs/promises';
 import path from 'path';
 
-import { IPC_CHANNELS } from './channels';
 import {
   SelectDirectoryRequest,
   SelectDirectoryResponse,
@@ -19,6 +18,8 @@ import {
   OpenInExplorerRequest,
   OpenInExplorerResponse,
 } from '../../renderer/types';
+
+import { IPC_CHANNELS } from './channels';
 
 /**
  * 注册文件系统相关的 IPC 处理器

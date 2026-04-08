@@ -4,14 +4,16 @@
  */
 
 import { ipcMain } from 'electron';
-import { getAppAssociation, getDeletionAssessment } from './app-association';
-import { IPC_CHANNELS } from './channels';
+
 import type {
   GetAppAssociationRequest,
   GetAppAssociationResponse,
   GetDeletionAssessmentRequest,
   GetDeletionAssessmentResponse,
 } from '../../renderer/types';
+
+import { getAppAssociation, getDeletionAssessment } from './app-association';
+import { IPC_CHANNELS } from './channels';
 
 export { getAppAssociation, getDeletionAssessment } from './app-association';
 

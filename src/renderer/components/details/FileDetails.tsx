@@ -7,11 +7,12 @@ import React, { useEffect, useState } from 'react';
 import { Folder, File, AlertCircle, Loader2 } from 'lucide-react';
 
 import { formatBytes, formatDate } from '@/lib/format';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import type { FileNode, AppAssociation, DeletionAssessment, DeleteResult } from '@/types';
+
 import { SafetyBadge } from './SafetyBadge';
 import { DeleteConfirm } from './DeleteConfirm';
 
-import type { FileNode, AppAssociation, DeletionAssessment, DeleteResult } from '@/types';
 
 interface FileDetailsProps {
   /** 选中的文件节点 */
@@ -22,7 +23,7 @@ interface FileDetailsProps {
   onDeleted?: (result: DeleteResult) => void;
 }
 
-export function FileDetails({ node, onClose, onDeleted }: FileDetailsProps) {
+export function FileDetails({ node, _onClose, onDeleted }: FileDetailsProps) {
   const [appAssociation, setAppAssociation] = useState<AppAssociation | null>(null);
   const [deletionAssessment, setDeletionAssessment] = useState<DeletionAssessment | null>(null);
   const [isLoading, setIsLoading] = useState(false);

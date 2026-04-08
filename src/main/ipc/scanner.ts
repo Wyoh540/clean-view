@@ -7,7 +7,6 @@ import { ipcMain, BrowserWindow } from 'electron';
 import fs from 'fs/promises';
 import path from 'path';
 
-import { IPC_CHANNELS } from './channels';
 import {
   ScanDirectoryRequest,
   ScanDirectoryResponse,
@@ -18,6 +17,8 @@ import {
   CancelScanRequest,
   CancelScanResponse,
 } from '../../renderer/types';
+
+import { IPC_CHANNELS } from './channels';
 
 // 活跃扫描任务的取消标志
 const activeScanCancelled = new Map<string, boolean>();

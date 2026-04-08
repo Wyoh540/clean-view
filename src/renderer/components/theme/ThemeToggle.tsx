@@ -1,5 +1,6 @@
 import React from 'react';
 import { Sun, Moon, Monitor } from 'lucide-react';
+
 import { Button } from '@/components/ui/button';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { useTheme } from '@/providers/theme-provider';

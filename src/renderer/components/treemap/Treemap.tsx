@@ -8,6 +8,7 @@ import React, { useMemo, useRef, useState, useCallback, useEffect } from 'react'
 import { hierarchy, treemap, treemapSquarify } from 'd3-hierarchy';
 
 import type { FileNode } from '@/types';
+
 import { TreemapNode } from './TreemapNode';
 import { TreemapTooltip } from './TreemapTooltip';
 import type { TreemapNodeData, LayoutNode } from './types';
